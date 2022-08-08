@@ -1,10 +1,17 @@
 #include <pybind11/pybind11.h>
 
+#include <Eigen/Dense>
+#include <foo/foo.h>
+#include <iostream>
+
 #define STRINGIFY(x) #x
 #define MACRO_STRINGIFY(x) STRINGIFY(x)
 
 int add(int i, int j) {
-    return j + i;
+	Eigen::MatrixXd m(i, j);
+	std::cout << "My first matrix:" << m << std::endl;
+	foo_print_version();
+	return m.rows() + m.cols();
 }
 
 namespace py = pybind11;
