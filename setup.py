@@ -47,6 +47,20 @@ class CMakeBuild(build_ext):
             f"-DPYTHON_EXECUTABLE={sys.executable}",
             f"-DCMAKE_BUILD_TYPE={cfg}",  # not used on MSVC, but no harm
         ]
+
+        # Change Visual Studio toolset depending on Python version (see tables on https://en.wikipedia.org/wiki/Microsoft_Visual_C%2B%2B for toolset (MSVC++ version) correspondence)
+        if sys.platform == 'win32':
+            match = re.search('MSC v.(\d+)', sys.version, re.IGNORECASE)
+            if match:
+                if (int(match.group(1)) >= 1930):
+                    cmake_args += [f"-Tv143"]
+                elif (int(match.group(1)) >= 1920) and (int(match.group(1)) < 1930):
+                    cmake_args += [f"-Tv142"]
+                elif (int(match.group(1)) >= 1910) and (int(match.group(1)) < 1920):
+                    cmake_args += [f"-Tv141"]
+                elif (int(match.group(1)) >= 1900) and (int(match.group(1)) < 1910):
+                    cmake_args += [f"-Tv140"]
+
         build_args = []
         # Adding CMake arguments set as environment variable
         # (needed e.g. to build for ARM OSx on conda-forge)
