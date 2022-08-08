@@ -1,8 +1,7 @@
 #include <pybind11/pybind11.h>
 
 #include <Eigen/Dense>
-#include <opencv2/core/core.hpp>
-#include <foo/foo.h>
+#include <ibex.h>
 #include <iostream>
 
 #define STRINGIFY(x) #x
@@ -11,10 +10,9 @@
 int add(int i, int j) {
 	Eigen::MatrixXd m(i, j);
 	std::cout << "My first matrix:" << m << std::endl;
-	cv::Mat M(2, 2, CV_8UC3, cv::Scalar(0, 0, 255));
-	std::cout << "cv::Mat M = " << std::endl << " " << M << std::endl << std::endl;
-	foo_print_version();
-	return m.rows() + m.cols();
+	ibex::Interval x(i, j);
+	std::cout << "My first interval:" << x << std::endl;
+	return x.lb() + x.ub();
 }
 
 namespace py = pybind11;
