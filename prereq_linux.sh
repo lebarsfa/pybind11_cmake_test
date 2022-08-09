@@ -11,7 +11,7 @@ elif [ $AUDITWHEEL_ARCH = "aarch64" ]; then
  echo aarch64
 fi
 
-yum -y install wget
+yum -y install wget opencv-devel
 
 wget https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.zip -nv
 unzip -q -o eigen-3.4.0.zip

@@ -44,6 +44,15 @@ jobs:
       with:
         platforms: arm64
 
+    - name: OpenCV prerequisites specific to Windows Server
+      if: runner.os == 'Windows'
+      run: |
+        powershell -Command "Install-WindowsFeature Server-Media-Foundation"
+        choco install -y -r --no-progress wget
+        wget http://www.ensta-bretagne.fr/lebars/Share/windows_server_core_prereq.zip --no-check-certificate -nv
+        7z x windows_server_core_prereq.zip -o"%SystemRoot%" -y & cd. & rem ksuser.dll already on windows-2016...?
+      shell: cmd
+
     - uses: pypa/cibuildwheel@v2.8.1
       env:
         CIBW_ARCHS_MACOS: x86_64 arm64
@@ -52,9 +61,12 @@ jobs:
         CIBW_BEFORE_BUILD_WINDOWS: cmd /c prereq_windows.cmd
         CIBW_BEFORE_BUILD_MACOS: bash prereq_macos.sh
         CIBW_ENVIRONMENT_MACOS: CMAKE_PREFIX_PATH=$HOME/arm-target
+        CIBW_ENVIRONMENT_WINDOWS: PATH="$PATH;C:\\OpenCV4.5.4\\x64\\vc15\\bin;C:\\OpenCV4.5.4\\x86\\vc15\\bin"
         CIBW_BUILD_VERBOSITY: 1
         #CIBW_TEST_REQUIRES: numpy
         #CIBW_TEST_COMMAND: python {project}/tests/test_basic.py
+        # Some tests cannot be run easily on the GitHub Actions hosted runners due to OpenCV...
+        CIBW_TEST_SKIP: "*win* *linux* *_arm64 *universal2:arm64"
         # Disable building PyPy, musllinux, etc. wheels to speed up...
         CIBW_SKIP: pp* *musl* cp36-* cp37-* cp39-* cp310-*
 

@@ -7,6 +7,7 @@ python -V -V
 
 if [ $_PYTHON_HOST_PLATFORM = "macosx-10.9-x86_64" ]; then
  brew install eigen
+ brew install opencv
 fi
 if [ $_PYTHON_HOST_PLATFORM = "macosx-11.0-arm64" ]; then
  # https://github.com/Homebrew/discussions/discussions/2843#discussioncomment-2243610
@@ -21,7 +22,7 @@ if [ $_PYTHON_HOST_PLATFORM = "macosx-11.0-arm64" ]; then
  export HOMEBREW_CACHE=~/arm-target/brew-cache
  export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1
  # List desired packages dependencies and install them, except pkg-config, cmake, etc. which should stay native
- arm-brew fetch --deps --bottle-tag=arm64_big_sur eigen |\
+ arm-brew fetch --deps --bottle-tag=arm64_big_sur eigen opencv |\
   grep -E "(Downloaded to:|Already downloaded:)" |\
   grep -v pkg-config | grep -v cmake | grep -v git | awk '{ print $3 }' |\
   xargs -n 1 arm-brew install --ignore-dependencies --force-bottle
